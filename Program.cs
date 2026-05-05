@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // 1. CONFIGURACIÓN DEL PUERTO PARA RAILWAY (Añade esto aquí)
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-builder.WebHost.UseUrls($"http://0.0.0:{port}");
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 builder.Services.AddDbContext<LogisticaHospitalariaContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("LogisticaHospitalariaContext")
