@@ -1,0 +1,6 @@
+@LogisticaHospitalaria_Backend_HostAddress = http://localhost:5178
+
+GET {{LogisticaHospitalaria_Backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
