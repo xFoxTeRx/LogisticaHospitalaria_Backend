@@ -4,6 +4,10 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// 1. CONFIGURACIÓN DEL PUERTO PARA RAILWAY (Añade esto aquí)
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://0.0.0:{port}");
+
 builder.Services.AddDbContext<LogisticaHospitalariaContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("LogisticaHospitalariaContext")
         ?? throw new InvalidOperationException("Connection string 'LogisticaHospitalariaContext' not found.")));
@@ -15,24 +19,22 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<WebhookService>();
 builder.Services.AddScoped<GestionInventarioService>();
 
-// CORS aquí arriba
 builder.Services.AddCors();
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// 2. FORZAR SWAGGER EN PRODUCCIÓN (Quitamos el "if")
+app.UseSwagger();
+app.UseSwaggerUI();
 
-// CORS aquí abajo, antes de todo lo demás
 app.UseCors(x => x
     .AllowAnyOrigin()
     .AllowAnyMethod()
     .AllowAnyHeader());
 
-app.UseHttpsRedirection();
+// 3. COMENTA ESTA LÍNEA (Railway maneja el HTTPS por fuera, a veces da error si se deja activa)
+// app.UseHttpsRedirection();
+
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
