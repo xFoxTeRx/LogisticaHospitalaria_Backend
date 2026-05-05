@@ -1,18 +1,30 @@
-﻿using LogisticaHospitalaria_Backend.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class Departamento
+namespace LogisticaHospitalaria_Backend.Models
 {
-    [Key]
-    public int DepartamentoId { get; set; }
-    public Guid PublicId { get; set; } = Guid.NewGuid();
-    public string Codigo { get; set; } = string.Empty;  // ← nuevo
-    public string Nombre { get; set; } = string.Empty;
-    public string? Descripcion { get; set; }
-    public string? Ubicacion { get; set; }
-    public bool Activo { get; set; } = true;
+    public class Departamento
+    {
+        [Key]
+        public int DepartamentoId { get; set; }
 
-    public ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>();
-    public ICollection<TipoDepartamento> TiposDepartamento { get; set; } = new List<TipoDepartamento>();
-    public ICollection<Solicitud> Solicitudes { get; set; } = new List<Solicitud>();
+        [Required]
+        [MaxLength(20)]
+        public string Codigo { get; set; } = string.Empty; // Ej: 'LOG-033'
+
+        [Required]
+        [MaxLength(100)]
+        public string Nombre { get; set; } = string.Empty;
+
+        // Nuevo campo solicitado
+        [MaxLength(500)]
+        public string? Descripcion { get; set; }
+
+        public string? Ubicacion { get; set; }
+
+        public bool Activo { get; set; } = true;
+
+        // Relaciones (Propiedades de navegación)
+        public virtual ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>();
+        public virtual ICollection<PedidoAutomatico> Pedidos { get; set; } = new List<PedidoAutomatico>();
+    }
 }
