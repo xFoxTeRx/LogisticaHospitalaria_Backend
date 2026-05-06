@@ -126,6 +126,17 @@ namespace LogisticaHospitalaria_Backend.Controllers
 
                 if (!itemsBajos.Any()) return Ok("El stock es suficiente. No se crearon pedidos.");
 
+                // --- AQUÍ VA LA VALIDACIÓN ---
+                // Verificamos si ya pedimos algo hoy para este departamento
+                var hoy = DateTime.UtcNow.Date;
+                var yaExistePedidoHoy = await _context.PedidoAutomaticos
+                    .AnyAsync(p => p.DepartamentoId == 1 && p.FechaGeneracion.Date == hoy);
+
+                if (yaExistePedidoHoy)
+                {
+                    return Ok(new { mensaje = "Ya se generó un reabastecimiento hoy. Esperando entrega para actualizar stock." });
+                }
+
                 // 3. CREAR EL PEDIDO (Asegúrate de que el DepartamentoId 1 exista en tu DB)
                 var nuevoPedido = new PedidoAutomatico
                 {
