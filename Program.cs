@@ -41,3 +41,4 @@ app.UseCors(x => x
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+builder.Services.AddHttpClient();
