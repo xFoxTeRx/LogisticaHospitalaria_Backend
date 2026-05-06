@@ -15,7 +15,7 @@ namespace LogisticaHospitalaria_Backend.Controllers
     {
         private readonly HttpClient _httpClient;
         private readonly LogisticaHospitalariaContext _context;
-        private const string API_URL = "http://10.77.200.28:5003/api/MisInventario/stock-actual";
+        private const string API_URL = "https://gestor-inventario-h-production.up.railway.app/api/MisInventario/stock-actual";
         private const int STOCK_MINIMO = 20;
 
         public InventarioController(IHttpClientFactory httpClientFactory, LogisticaHospitalariaContext context)
