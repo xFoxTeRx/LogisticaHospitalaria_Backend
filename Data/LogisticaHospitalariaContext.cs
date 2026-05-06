@@ -1,6 +1,6 @@
 ﻿// Data/LogisticaHospitalariaContext.cs
 using LogisticaHospitalaria_Backend.Models;
-using LogisticaHospitalaria_Backend.Models.HospitalApi.Models;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace LogisticaHospitalaria_Backend.Data

@@ -3,6 +3,7 @@ using System;
 using LogisticaHospitalaria_Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LogisticaHospitalaria_Backend.Migrations
 {
     [DbContext(typeof(LogisticaHospitalariaContext))]
-    partial class LogisticaHospitalariaContextModelSnapshot : ModelSnapshot
+    [Migration("20260506132416_M99")]
+    partial class M99
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,66 +24,6 @@ namespace LogisticaHospitalaria_Backend.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("LogisticaHospitalaria_Backend.Models.Cama", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CamasDisponibles")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("CantidadCamas")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Departamento")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Camas");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CamasDisponibles = 0,
-                            CantidadCamas = 20,
-                            Departamento = "Emergencias"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CamasDisponibles = 0,
-                            CantidadCamas = 15,
-                            Departamento = "Pediatría"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CamasDisponibles = 0,
-                            CantidadCamas = 10,
-                            Departamento = "UCI"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CamasDisponibles = 0,
-                            CantidadCamas = 25,
-                            Departamento = "Cirugía"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CamasDisponibles = 0,
-                            CantidadCamas = 18,
-                            Departamento = "Maternidad"
-                        });
-                });
 
             modelBuilder.Entity("LogisticaHospitalaria_Backend.Models.Departamento", b =>
                 {
@@ -117,6 +60,58 @@ namespace LogisticaHospitalaria_Backend.Migrations
                         .IsUnique();
 
                     b.ToTable("Departamentos");
+                });
+
+            modelBuilder.Entity("LogisticaHospitalaria_Backend.Models.HospitalApi.Models.Cama", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CantidadCamas")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Departamento")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Camas");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CantidadCamas = 20,
+                            Departamento = "Emergencias"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CantidadCamas = 15,
+                            Departamento = "Pediatría"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CantidadCamas = 10,
+                            Departamento = "UCI"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CantidadCamas = 25,
+                            Departamento = "Cirugía"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CantidadCamas = 18,
+                            Departamento = "Maternidad"
+                        });
                 });
 
             modelBuilder.Entity("LogisticaHospitalaria_Backend.Models.PedidoAutomatico", b =>
