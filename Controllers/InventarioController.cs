@@ -130,5 +130,25 @@ namespace LogisticaHospitalaria_Backend.Controllers
                 Pedidos = pedidosGenerados
             });
         }
+        [HttpGet("resumen")]
+        public async Task<IActionResult> GetResumen()
+        {
+            var response = await _httpClient.GetAsync(API_URL);
+            if (!response.IsSuccessStatusCode)
+                return StatusCode(502, "Error al conectar con la API de inventario.");
+
+            var json = await response.Content.ReadAsStringAsync();
+            var stock = JsonSerializer.Deserialize<List<StockExternoDTO>>(json, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            return Ok(new
+            {
+                TotalInsumos = stock?.Count,
+                InsumosBajoStock = stock?.Count(s => s.StockActual < 20 && s.StockActual > 0),
+                InsumosAgotados = stock?.Count(s => s.StockActual <= 0)
+            });
+        }
     }
 }
