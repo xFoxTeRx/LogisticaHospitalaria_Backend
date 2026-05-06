@@ -12,6 +12,9 @@ builder.Services.AddDbContext<LogisticaHospitalariaContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("LogisticaHospitalariaContext")
         ?? throw new InvalidOperationException("Connection string 'LogisticaHospitalariaContext' not found.")));
 
+builder.Services.AddControllers().AddJsonOptions(x =>
+    x.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
