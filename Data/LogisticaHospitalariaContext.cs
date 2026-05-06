@@ -1,6 +1,7 @@
 ﻿// Data/LogisticaHospitalariaContext.cs
-using Microsoft.EntityFrameworkCore;
 using LogisticaHospitalaria_Backend.Models;
+using LogisticaHospitalaria_Backend.Models.HospitalApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace LogisticaHospitalaria_Backend.Data
 {
@@ -13,6 +14,7 @@ namespace LogisticaHospitalaria_Backend.Data
         public DbSet<PedidoAutomatico> PedidoAutomaticos { get; set; }
         public DbSet<PedidoDetalle> PedidoDetalles { get; set; }
 
+        public DbSet<Cama> Camas { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -32,6 +34,15 @@ namespace LogisticaHospitalaria_Backend.Data
                 .WithMany(p => p.Detalles)
                 .HasForeignKey(dp => dp.PedidoId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Cama>().HasData(
+                new Cama { Id = 1, Departamento = "Emergencias", CantidadCamas = 20 },
+                new Cama { Id = 2, Departamento = "Pediatría", CantidadCamas = 15 },
+                new Cama { Id = 3, Departamento = "UCI", CantidadCamas = 10 },
+                new Cama { Id = 4, Departamento = "Cirugía", CantidadCamas = 25 },
+                new Cama { Id = 5, Departamento = "Maternidad", CantidadCamas = 18 }
+            );
         }
+
     }
 }
