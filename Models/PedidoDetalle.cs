@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// Models/PedidoDetalle.cs
+using System.ComponentModel.DataAnnotations;
 
 namespace LogisticaHospitalaria_Backend.Models
 {
@@ -6,10 +7,17 @@ namespace LogisticaHospitalaria_Backend.Models
     {
         [Key]
         public int DetalleId { get; set; }
+
         [Required]
+        public string ItemExternoId { get; set; } = string.Empty;
+
+        [Required, MaxLength(200)]
         public string ItemNombre { get; set; } = string.Empty;
-        public int Cantidad { get; set; }
+
+        [Range(1, int.MaxValue)]
+        public int CantidadSolicitada { get; set; }
+
         public int PedidoId { get; set; }
-        public virtual PedidoAutomatico Pedido { get; set; } = null!;
+        public PedidoAutomatico Pedido { get; set; } = null!;
     }
 }

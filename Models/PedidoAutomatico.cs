@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// Models/PedidoAutomatico.cs
+using LogisticaHospitalaria_Backend.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace LogisticaHospitalaria_Backend.Models
 {
@@ -6,12 +8,14 @@ namespace LogisticaHospitalaria_Backend.Models
     {
         [Key]
         public int PedidoId { get; set; }
-        public DateTime FechaGeneracion { get; set; } = DateTime.Now;
-        public string Estado { get; set; } = "Generado";
+
+        public DateTime FechaGeneracion { get; set; } = DateTime.UtcNow;
+
+        public EstadoPedido Estado { get; set; } = EstadoPedido.Generado;
 
         public int DepartamentoId { get; set; }
-        public virtual Departamento Departamento { get; set; } = null!;
+        public Departamento Departamento { get; set; } = null!;
 
-        public virtual ICollection<PedidoDetalle> Detalles { get; set; } = new List<PedidoDetalle>();
+        public ICollection<PedidoDetalle> Detalles { get; set; } = new List<PedidoDetalle>();
     }
 }

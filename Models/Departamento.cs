@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// Models/Departamento.cs
+using System.ComponentModel.DataAnnotations;
 
 namespace LogisticaHospitalaria_Backend.Models
 {
@@ -7,24 +8,20 @@ namespace LogisticaHospitalaria_Backend.Models
         [Key]
         public int DepartamentoId { get; set; }
 
-        [Required]
-        [MaxLength(20)]
-        public string Codigo { get; set; } = string.Empty; // Ej: 'LOG-033'
+        [Required, MaxLength(20)]
+        public string Codigo { get; set; } = string.Empty;
 
-        [Required]
-        [MaxLength(100)]
+        [Required, MaxLength(100)]
         public string Nombre { get; set; } = string.Empty;
 
-        // Nuevo campo solicitado
         [MaxLength(500)]
         public string? Descripcion { get; set; }
 
+        [MaxLength(200)]
         public string? Ubicacion { get; set; }
 
         public bool Activo { get; set; } = true;
 
-        // Relaciones (Propiedades de navegación)
-        public virtual ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>();
-        public virtual ICollection<PedidoAutomatico> Pedidos { get; set; } = new List<PedidoAutomatico>();
+        public ICollection<PedidoAutomatico> Pedidos { get; set; } = new List<PedidoAutomatico>();
     }
 }

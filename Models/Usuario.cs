@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿// Models/Usuario.cs
+using LogisticaHospitalaria_Backend.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace LogisticaHospitalaria_Backend.Models
 {
@@ -10,13 +12,9 @@ namespace LogisticaHospitalaria_Backend.Models
         [Required, MaxLength(100)]
         public string Nombre { get; set; } = string.Empty;
 
-        [EmailAddress]
+        [EmailAddress, MaxLength(150)]
         public string? Email { get; set; }
 
-        public string Rol { get; set; } = "Administrador"; // 'Admin', 'Operador'
-
-        // FK a Departamentos
-        public int DepartamentoId { get; set; }
-        public virtual Departamento Departamento { get; set; } = null!;
+        public RolUsuario Rol { get; set; } = RolUsuario.Administrador;
     }
 }
