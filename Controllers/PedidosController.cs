@@ -130,7 +130,7 @@ namespace LogisticaHospitalaria_Backend.Controllers
                 var nuevoPedido = new PedidoAutomatico
                 {
                     DepartamentoId = 36, // Cambia este ID por uno válido de tu tabla Departamentos
-                    FechaGeneracion = DateTime.Now,
+                    FechaGeneracion = DateTime.UtcNow,
                     Estado = LogisticaHospitalaria_Backend.Models.Enums.EstadoPedido.Generado
                 };
 
