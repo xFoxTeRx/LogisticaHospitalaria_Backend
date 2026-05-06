@@ -1,9 +1,10 @@
 ﻿// Controllers/PedidosController.cs
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using LogisticaHospitalaria_Backend.Data;
 using LogisticaHospitalaria_Backend.DTOs;
+using LogisticaHospitalaria_Backend.Models;
 using LogisticaHospitalaria_Backend.Models.Enums;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace LogisticaHospitalaria_Backend.Controllers
 {
@@ -105,6 +106,61 @@ namespace LogisticaHospitalaria_Backend.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        // POST: api/Pedidos/reabastecimiento
+        [HttpPost("reabastecimiento")]
+        public async Task<IActionResult> GenerarReabastecimiento()
+        {
+            using var client = new HttpClient();
+
+            try
+            {
+                // 1. Obtener catálogo externo
+                var catalogo = await client.GetFromJsonAsync<List<MedicamentoFarmaciaDTO>>("https://hospital3ernivel-farmacia.onrender.com/api/Medicamentos/catalogo");
+
+                if (catalogo == null || !catalogo.Any()) return BadRequest("No se pudo obtener datos de la farmacia.");
+
+                // 2. Crear la cabecera del pedido para Logística (ID 36 o el que tengas)
+                var nuevoPedido = new PedidoAutomatico
+                {
+                    DepartamentoId = 36, // Ajusta este ID al de tu dpto de Logística
+                    FechaGeneracion = DateTime.Now,
+                    // Asegúrate de que el nombre del Enum sea el correcto según tu carpeta Enums
+                    Estado = LogisticaHospitalaria_Backend.Models.Enums.EstadoPedido.Generado
+                };
+
+                _context.PedidoAutomaticos.Add(nuevoPedido);
+                await _context.SaveChangesAsync();
+
+                // 3. Llenar los detalles con lo que trajimos de Render
+                foreach (var med in catalogo.Take(5)) // Tomamos 5 para probar
+                {
+                    var detalle = new PedidoDetalle
+                    {
+                        PedidoId = nuevoPedido.PedidoId,
+                        ItemNombre = $"{med.nombreGenerico} - {med.nombreComercial}",
+                        CantidadSolicitada = 100
+                    };
+                    _context.PedidoDetalles.Add(detalle);
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new { mensaje = "Reabastecimiento generado", pedidoId = nuevoPedido.PedidoId });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error de conexión: {ex.Message}");
+            }
+        }
+
+        // Pon esta clase pequeña aquí mismo, al final del controlador (fuera de los métodos)
+        public class MedicamentoFarmaciaDTO
+        {
+            public string? codigo { get; set; }
+            public string? nombreGenerico { get; set; }
+            public string? nombreComercial { get; set; }
         }
     }
 }
