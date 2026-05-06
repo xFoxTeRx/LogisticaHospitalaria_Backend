@@ -108,7 +108,6 @@ namespace LogisticaHospitalaria_Backend.Controllers
             return NoContent();
         }
 
-        // POST: api/Pedidos/reabastecimiento
         [HttpPost("reabastecimiento")]
         public async Task<IActionResult> GenerarReabastecimiento()
         {
@@ -116,51 +115,62 @@ namespace LogisticaHospitalaria_Backend.Controllers
 
             try
             {
-                // 1. Obtener catálogo externo
-                var catalogo = await client.GetFromJsonAsync<List<MedicamentoFarmaciaDTO>>("https://hospital3ernivel-farmacia.onrender.com/api/Medicamentos/catalogo");
+                // 1. CONSUMIR LA API DE STOCKS ACTUALES
+                var stocks = await client.GetFromJsonAsync<List<StockFarmaciaDTO>>("https://hospital3ernivel-farmacia.onrender.com/apiStocksActuales");
 
-                if (catalogo == null || !catalogo.Any()) return BadRequest("No se pudo obtener datos de la farmacia.");
+                if (stocks == null || !stocks.Any()) return BadRequest("No hay datos de stock disponibles.");
 
-                // 2. Crear la cabecera del pedido para Logística (ID 36 o el que tengas)
+                // 2. FILTRAR: ¿Qué necesita reabastecimiento? 
+                // Ejemplo: Si la cantidad es menor a 200, generamos pedido.
+                var itemsBajos = stocks.Where(s => s.cantidadDisponible < 200).ToList();
+
+                if (!itemsBajos.Any()) return Ok("El stock es suficiente. No se crearon pedidos.");
+
+                // 3. CREAR EL PEDIDO (Asegúrate de que el DepartamentoId 1 exista en tu DB)
                 var nuevoPedido = new PedidoAutomatico
                 {
-                    DepartamentoId = 36, // Ajusta este ID al de tu dpto de Logística
+                    DepartamentoId = 36, // Cambia este ID por uno válido de tu tabla Departamentos
                     FechaGeneracion = DateTime.Now,
-                    // Asegúrate de que el nombre del Enum sea el correcto según tu carpeta Enums
                     Estado = LogisticaHospitalaria_Backend.Models.Enums.EstadoPedido.Generado
                 };
 
                 _context.PedidoAutomaticos.Add(nuevoPedido);
                 await _context.SaveChangesAsync();
 
-                // 3. Llenar los detalles con lo que trajimos de Render
-                foreach (var med in catalogo.Take(5)) // Tomamos 5 para probar
+                // 4. AGREGAR DETALLES
+                foreach (var item in itemsBajos)
                 {
                     var detalle = new PedidoDetalle
                     {
                         PedidoId = nuevoPedido.PedidoId,
-                        ItemNombre = $"{med.nombreGenerico} - {med.nombreComercial}",
-                        CantidadSolicitada = 100
+                        ItemNombre = $"{item.medicamentoNombre} ({item.concentracion})",
+                        CantidadSolicitada = 500 // Pedimos 500 para rellenar el stock
                     };
                     _context.PedidoDetalles.Add(detalle);
                 }
 
                 await _context.SaveChangesAsync();
 
-                return Ok(new { mensaje = "Reabastecimiento generado", pedidoId = nuevoPedido.PedidoId });
+                return Ok(new
+                {
+                    mensaje = "Reabastecimiento generado por bajo stock",
+                    itemsSolicitados = itemsBajos.Select(i => i.medicamentoNombre),
+                    pedidoId = nuevoPedido.PedidoId
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error de conexión: {ex.Message}");
+                var mensajeReal = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                return StatusCode(500, $"Error: {mensajeReal}");
             }
         }
 
-        // Pon esta clase pequeña aquí mismo, al final del controlador (fuera de los métodos)
-        public class MedicamentoFarmaciaDTO
+        // DTO ajustado a tu nuevo JSON
+        public class StockFarmaciaDTO
         {
-            public string? codigo { get; set; }
-            public string? nombreGenerico { get; set; }
-            public string? nombreComercial { get; set; }
+            public string? medicamentoNombre { get; set; }
+            public string? concentracion { get; set; }
+            public int cantidadDisponible { get; set; }
         }
     }
 }
