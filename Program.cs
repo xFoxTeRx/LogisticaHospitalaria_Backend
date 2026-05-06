@@ -1,12 +1,20 @@
 ﻿using LogisticaHospitalaria_Backend.Data;
 using LogisticaHospitalaria_Backend.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. CONFIGURACIÓN DEL PUERTO PARA RAILWAY (Añade esto aquí)
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 
 builder.Services.AddDbContext<LogisticaHospitalariaContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("LogisticaHospitalariaContext")
